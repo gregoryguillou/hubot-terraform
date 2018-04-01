@@ -1,0 +1,17 @@
+language: node_js
+sudo: false
+notifications:
+  email: false
+node_js:
+- '9'
+cache:
+  directories:
+  - node_modules
+deploy:
+  provider: npm
+  email: gregory.guillou@resetlogs.com
+  api_key:
+    secure: iHLb15AnBgnRqvkURe3L5X0GoER3Qwr5Xa1TUBFDnGVza3E+OcMRWFs3jikC4fKfryiNLb4yODa7J49keQeBv6liyIJFWb52Nv+uonaA5ec8HN9Wc35W3SDyc6SJn8dlLhq/MRShWsmNI1R7/48tC6GHf/eCsdGCS656l1aX4UEvO90d/s8jEkbv2cyhuLjZTk3nEgeaJAra/UlIU+tI1GYbHq+4G39lF92HyDOPmwl43r2lJmXbNSE/3amrRi9x9J02bqQEQQ+Ww4GR7kpDK6t/fiQK9b3uZnlhgP/zi006ETeVc4QTYpR6OeYFhMI2N3tpLmbT+KIVNfX36cpbseT+4bFE1cip9Z9Vvn9mcoOjijuHS89e9R5YtvFX8U5g577O4ZVnmh/gdin+SwJ4YgZaZ3ZkHHjegNIHcOB5VId/EPY7SWqAd7pbtivBpvhOj/j9dpNoI7kQA/o0l7QEoELZHyrVOAX/p+pcQPPQLl66Ja7cvuS9FN28PpVNU4Wykct9xUAbIKfb3+LgcsOApdhkb9NtNBxq8tYbBbB/LDDyNWZshHgQs7q06CkJlI9uqSrDuNbikDQz2aP0aaMRq96ZZXM+5PoXxuZE9tNDJdIyxKilvePj6UPbDYzbWIS0p3u8G8+zRA7EwEwTE3yVT4i3+phZxOVjisPj6J8dhBE=
+  on:
+    tags: true
+    repo: gregoryguillou/hubot-terraform
