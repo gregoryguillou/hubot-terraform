@@ -43,24 +43,10 @@ describe('terraform', () => {
   it('responds to hello', (done) => {
     robot.adapter.on('reply', function (envelope, strings) {
       const answer = strings[0]
-
-      expect(answer).to.eql('hello!')
-
+      expect(answer).to.eql('Hello! Terraform API scripts are not implemented yet, be patient...')
       done()
     })
 
-    robot.adapter.receive(new TextMessage(user, 'hubot hello'))
-  })
-
-  it('hears orly', (done) => {
-    robot.adapter.on('send', function (envelope, strings) {
-      const answer = strings[0]
-
-      expect(answer).to.eql('yarly')
-
-      done()
-    })
-
-    robot.adapter.receive(new TextMessage(user, 'just wanted to say orly'))
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform help'))
   })
 })
