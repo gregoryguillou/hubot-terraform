@@ -1,6 +1,6 @@
 {
   "name": "hubot-terraform",
-  "description": "A hubot script to interact with the Terraform API",
+  "description": "A hubot script that interact with the Terraform API",
   "version": "1.0.0",
   "author": "Gregory Guillou <gregory.guillou@resetlogs.com>",
   "license": "MIT",
