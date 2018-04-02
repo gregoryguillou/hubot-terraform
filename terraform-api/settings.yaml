@@ -1,0 +1,40 @@
+api:
+  clone-directory: /tmp
+couchbase:
+  url: couchbase:8091
+  username: admin
+  password: couchbase
+  data_bucket: data
+  log_bucket: logs
+  'bucket-password': couchbase
+docker:
+  socketPath: '/var/run/docker.sock'
+jwt:
+  secretOrKey: secret
+pool:
+  type: docker
+projects:
+  - type: terraform
+    name: demonstration
+    description: A demonstration project that relies on Consul
+    docker-image: "gregoryguillou/terraform-api:latest-runtime"
+    git:
+      repository: github.com/gregoryguillou/terraform-stacks.git
+      branch: master
+      username: username
+      password: "password"
+      directory: demo
+    workspaces:
+      - staging
+    lifecycle:
+      cwd: projects/demonstration
+      getenv:
+        - ./getenv.sh {{terraform-api.WORKSPACE}}
+      setenv:
+        - CONSUL_IP={{env.CONSUL}}
+      status:
+        - ./status.sh -w {{terraform-api.WORKSPACE}}
+users:
+  - username: 'gregory'
+    apikey: 'welcome'
+    role: administrator
