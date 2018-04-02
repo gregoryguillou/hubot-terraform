@@ -1,16 +1,16 @@
 language: node_js
-sudo: false
+sudo: true
 
 notifications:
   email: false
 
-  node_js:
+node_js:
 - '9'
 
 services:
   - docker
 
-  cache:
+cache:
   directories:
   - node_modules
 
