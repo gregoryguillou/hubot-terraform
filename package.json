@@ -6,7 +6,8 @@
   "license": "MIT",
   "keywords": [
     "hubot",
-    "hubot-scripts"
+    "hubot-scripts",
+    "terraform"
   ],
   "repository": {
     "type": "git",
