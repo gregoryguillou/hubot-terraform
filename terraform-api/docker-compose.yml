@@ -1,0 +1,53 @@
+version: '3.2'
+
+services:
+  terraform-api:
+    image: "gregoryguillou/terraform-api:${VERSION:-v0.1.7}"
+    ports:
+      - 10010:10010
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+     - $PWD/settings.yaml:/app/config/settings.yaml
+    depends_on:
+      - consul
+      - couchbase
+    restart: "always"
+
+  runtime:
+    image: "gregoryguillou/terraform-api:${VERSION:-v0.1.7}-runtime"
+    depends_on:
+      - consul
+    environment:
+      CONSUL_IP: consul
+      GITHUB_REPOSITORY: "https://github.com/gregoryguillou/terraform-stacks.git"
+    command: ["-c", "sleep 10"]
+    entrypoint: ["/bin/bash"]
+    restart: "no"
+
+  consul:
+    image: consul:1.0.6
+    environment:
+      CONSUL_BIND_INTERFACE: eth0
+    ports:
+      - 8500:8500
+    labels:
+      - "terraform-api.role=consul"
+    restart: "always"
+
+  couchbase:
+    image: couchbase:community-5.0.1
+    ports:
+      - 8091-8094:8091-8094
+      - 11210:11210
+    labels:
+      - "terraform-api.role=couchbase-server"
+    restart: "always"
+
+  couchbase-setup:
+    image: couchbase:community-5.0.1
+    volumes:
+      - $PWD/couchbase-setup.sh:/script/couchbase-setup.sh
+    depends_on:
+      - couchbase
+    command: ['/script/couchbase-setup.sh']
+    restart: "no"

@@ -16,3 +16,20 @@ npm install
 
 # Make sure coffee and mocha are on the path
 export PATH="node_modules/.bin:$PATH"
+
+cd terraform-api
+
+docker-compose up -d
+
+printf "Checking the API status.\n"
+
+for i in {1..100}; do
+  curl -L --fail --silent http://localhost:10010/status >/dev/null 2>&1 && break || true
+  sleep 1
+  printf "."
+done
+sleep 1
+printf ".\n"
+
+cd ..
+
