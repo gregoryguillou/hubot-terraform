@@ -41,7 +41,7 @@ describe('terraform', function () {
     robot.shutdown()
   })
 
-  it('responds to hello', (done) => {
+  it('responds to help', (done) => {
     robot.adapter.on('reply', function (envelope, strings) {
       const answer = strings[0]
       expect(answer).to.have.string('*apply*')
@@ -112,5 +112,71 @@ describe('terraform', function () {
       }
     })
     robot.adapter.receive(new TextMessage(user, 'hubot terraform apply'))
+  })
+
+  it('responds to quickcheck', (done) => {
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      expect(answer).to.have.string(':heart_eyes:')
+      done()
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform quickcheck'))
+  })
+
+  it('responds to check', (done) => {
+    let i = 0
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      i++
+      if (i === 1) {
+        expect(answer).to.have.string('applied')
+      }
+      if (i === 2) {
+        expect(answer).to.have.string(':heart_eyes:')
+        done()
+      }
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform check'))
+  })
+
+  it('responds to destroy', (done) => {
+    let i = 0
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      i++
+      if (i === 1) {
+        expect(answer).to.have.string('destroyed')
+      }
+      if (i === 2) {
+        expect(answer).to.have.string(':heart_eyes:')
+        done()
+      }
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform destroy'))
+  })
+
+  it('responds to quickcheck', (done) => {
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      expect(answer).to.have.string(':skull_and_crossbones:')
+      done()
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform quickcheck'))
+  })
+
+  it('responds to clean', (done) => {
+    let i = 0
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      i++
+      if (i === 1) {
+        expect(answer).to.have.string('destroyed')
+      }
+      if (i === 2) {
+        expect(answer).to.have.string(':heart_eyes:')
+        done()
+      }
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform clean'))
   })
 })

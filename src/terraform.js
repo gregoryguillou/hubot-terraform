@@ -22,89 +22,6 @@ const WORKSPACE = process.env.TERRAFORM_API__WORKSPACE || 'staging'
 const ENDPOINT = process.env.TERRAFORM_API__ENDPOINT_URL || 'http://localhost:10010'
 const APIKEY = process.env.TERRAFORM_API__APIKEY || 'welcome'
 
-const quickcheck = (props, message, callback) => {
-  get(props, `/projects/${props.project}/workspaces/${props.workspace}/status`, (err, data) => {
-    if (err) {
-      message(
-        props,
-        'Error detected:\n'
-          .concat(err.text)
-      )
-      return
-    }
-    const statusMessage = (data.quickCheck === 'failure' ? '*failed* :skull_and_crossbones:' : '*passed* :heart_eyes:')
-    message(
-      props,
-      `I've checked *${props.project}*/*${props.workspace}* and quickcheck has returned ${statusMessage}\n`)
-  })
-}
-
-const check = (props, message, callback) => {
-  post(props, `/projects/${props.project}/workspaces/${props.workspace}`, {action: 'check'}, (err, response, data) => {
-    if (err) {
-      message(
-        props,
-        'Error detected:\n'
-          .concat(err.text)
-      )
-      return
-    }
-    let respMessage = 'request succeeded :heart_eyes:'
-    if (response.statusCode === 209) {
-      respMessage = 'change pending, please wait :sweat_smile:'
-    } else if (response.statusCode !== 201) {
-      respMessage = 'ough, it has failed :skull_and_crossbones:'
-    }
-    message(
-      props,
-      `I've submitted your request and I got: ${respMessage}\n`)
-  })
-}
-
-const clean = (props, message, callback) => {
-  post(props, `/projects/${props.project}/workspaces/${props.workspace}`, {action: 'clean'}, (err, response, data) => {
-    if (err) {
-      message(
-        props,
-        'Error detected:\n'
-          .concat(err.text)
-      )
-      return
-    }
-    let respMessage = 'request succeeded :heart_eyes:'
-    if (response.statusCode === 209) {
-      respMessage = 'change pending, please wait :sweat_smile:'
-    } else if (response.statusCode !== 201) {
-      respMessage = 'ough, it has failed :skull_and_crossbones:'
-    }
-    message(
-      props,
-      `I've submitted your request and I got: ${respMessage}\n`)
-  })
-}
-
-const destroy = (props, message, callback) => {
-  post(props, `/projects/${props.project}/workspaces/${props.workspace}`, {action: 'destroy'}, (err, response, data) => {
-    if (err) {
-      message(
-        props,
-        'Error detected:\n'
-          .concat(err.text)
-      )
-      return
-    }
-    let respMessage = 'request succeeded :heart_eyes:'
-    if (response.statusCode === 209) {
-      respMessage = 'change pending, please wait :sweat_smile:'
-    } else if (response.statusCode !== 201) {
-      respMessage = 'ough, it has failed :skull_and_crossbones:'
-    }
-    message(
-      props,
-      `I've submitted your request and I got: ${respMessage}\n`)
-  })
-}
-
 const reply = (message) => {
   const sentence = Math.floor(Math.random() * 15)
   const formula = [
@@ -231,6 +148,45 @@ const apply = (message) => {
   })
 }
 
+const destroy = (message) => {
+  post(`/projects/${PROJECT}/workspaces/${WORKSPACE}`, {action: 'destroy'}, message, (err, response, data) => {
+    if (err) { throw err }
+    let respMessage = 'request succeeded :heart_eyes:'
+    if (response.statusCode === 209) {
+      respMessage = 'change pending, please wait :sweat_smile:'
+    } else if (response.statusCode !== 201) {
+      respMessage = 'ough, it has failed :skull_and_crossbones:'
+    }
+    message.reply(`I've submitted your request and I got: ${respMessage}\n`)
+  })
+}
+
+const clean = (message) => {
+  post(`/projects/${PROJECT}/workspaces/${WORKSPACE}`, {action: 'clean'}, message, (err, response, data) => {
+    if (err) { throw err }
+    let respMessage = 'request succeeded :heart_eyes:'
+    if (response.statusCode === 209) {
+      respMessage = 'change pending, please wait :sweat_smile:'
+    } else if (response.statusCode !== 201) {
+      respMessage = 'ough, it has failed :skull_and_crossbones:'
+    }
+    message.reply(`I've submitted your request and I got: ${respMessage}\n`)
+  })
+}
+
+const check = (message) => {
+  post(`/projects/${PROJECT}/workspaces/${WORKSPACE}`, {action: 'check'}, message, (err, response, data) => {
+    if (err) { throw err }
+    let respMessage = 'request succeeded :heart_eyes:'
+    if (response.statusCode === 209) {
+      respMessage = 'change pending, please wait :sweat_smile:'
+    } else if (response.statusCode !== 201) {
+      respMessage = 'ough, it has failed :skull_and_crossbones:'
+    }
+    message.reply(`I've submitted your request and I got: ${respMessage}\n`)
+  })
+}
+
 const show = (message) => {
   get(`/projects/${PROJECT}/workspaces/${WORKSPACE}`, message, (err, data) => {
     if (err) {
@@ -321,6 +277,19 @@ const branches = (message) => {
   })
 }
 
+const quickcheck = (message) => {
+  get(`/projects/${PROJECT}/workspaces/${WORKSPACE}/status`, message, (err, data) => {
+    if (err) {
+      message.reply(`Error detected:\n${err.text}`)
+      return
+    }
+    const statusMessage = (data.quickCheck === 'failure' ? '*failed* :skull_and_crossbones:' : '*passed* :heart_eyes:')
+    message.reply(
+      `I've checked *${PROJECT}*/*${WORKSPACE}* and quickcheck has returned ${statusMessage}\n`
+    )
+  })
+}
+
 module.exports = (robot) => {
   robot.respond(/terraform\shelp/, (message) => {
     help(message)
@@ -330,8 +299,24 @@ module.exports = (robot) => {
     apply(message)
   })
 
+  robot.respond(/terraform\scheck/, (message) => {
+    check(message)
+  })
+
+  robot.respond(/terraform\sclean/, (message) => {
+    clean(message)
+  })
+
+  robot.respond(/terraform\sdestroy/, (message) => {
+    destroy(message)
+  })
+
   robot.respond(/terraform\shi/, (message) => {
     reply(message)
+  })
+
+  robot.respond(/terraform\squickcheck/, (message) => {
+    quickcheck(message)
   })
 
   robot.respond(/terraform\sshow/, (message) => {
