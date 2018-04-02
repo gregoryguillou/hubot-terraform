@@ -17,22 +17,10 @@
 //   Gregory Guillou <gregory.guillou@resetlogs.com>
 
 const request = require('request')
-
-const authenticate = (props, message, callback) => {
-  const options = {
-    url: `${props.apiurl}/login`,
-    headers: {Authorization: `Key ${props.apikey}`}
-  }
-  request.get(options, (err, data) => {
-    if (err) {
-      message(props, `Error connecting to the API:\n${err.text}`)
-      if (callback) { callback(err, null) }
-    } else {
-      const token = JSON.parse(data.body).token
-      if (callback) { callback(null, {token}) }
-    }
-  })
-}
+const PROJECT = process.env.TERRAFORM_API__PROJECT || 'demonstration'
+const WORKSPACE = process.env.TERRAFORM_API__WORKSPACE || 'staging'
+const ENDPOINT = process.env.TERRAFORM_API__ENDPOINT_URL || 'http://localhost:10010'
+const APIKEY = process.env.TERRAFORM_API__APIKEY || 'welcome'
 
 function queryWorkspace (i, props, message, callback) {
   setTimeout(function () {
@@ -71,23 +59,6 @@ function queryWorkspace (i, props, message, callback) {
   }, 1000)
 }
 
-const get = (props, url, message, callback) => {
-  authenticate(props, (err, data) => {
-    if (err) { throw err }
-    const options = {
-      url: `${props.apiurl}${url}`,
-      headers: {Authorization: `Bearer ${data.token}`}
-    }
-    request.get(options, (err, data) => {
-      if (err) {
-        message(props, `Error connecting to the API:\n${err.text}`)
-        if (callback) { callback(err, null) }
-      } else {
-        if (callback) { callback(null, JSON.parse(data.body)) }
-      }
-    })
-  })
-}
 
 const post = (props, url, payload, message, callback) => {
   authenticate(props, (err, data) => {
@@ -111,29 +82,6 @@ const post = (props, url, payload, message, callback) => {
         if (callback) { callback(null, response, null) }
       }
     })
-  })
-}
-
-const show = (props, message, callback) => {
-  get(props, `/projects/${props.project}/workspaces/${props.workspace}`, (err, data) => {
-    if (err) {
-      message(
-        props,
-        'Error detected:\n'
-          .concat(err.text)
-      )
-      return
-    }
-    message(
-      props,
-      'You are working on:\n'
-        .concat(`\`\`\``)
-        .concat(`project:   ${data.project}\n`)
-        .concat(`workspace: ${data.workspace}\n`)
-        .concat(`ref:       ${data.ref}\n`)
-        .concat(`state:     ${data.state}\n`)
-        .concat(`\`\`\``)
-    )
   })
 }
 
@@ -369,13 +317,13 @@ const response = (props, message, msg) => {
 
   const sentence = Math.floor(Math.random() * 15)
   const formula = [
-    `Hi <@${props.userId}>, so glad you need me...`,
+    `Hi, so glad you need me...`,
     `Hey, where have you been?`,
     `Hello, sunshine! type one of ${helpString}`,
     `Howdy, partner!`,
     `Hey, howdy, hi! try ${helpString}`,
     `What’s kickin’, little chicken?`,
-    `Peek-a-boo <@${props.userId}>! Yoo-hu`,
+    `Peek-a-boo! Yoo-hu`,
     `Howdy-doody!`,
     `Hey there, freshman!`,
     `My name's Terraform-Bot, and I'm a bad guy.`,
@@ -383,9 +331,83 @@ const response = (props, message, msg) => {
     `I come in peace!`,
     `Put that cookie down!`,
     `Ahoy, matey! the words you are looking for are ${helpString}`,
-    `Hiya <@${props.userId}>!`
+    `Hiya!`
   ]
-  message(props, formula[sentence])
+  message(formula[sentence])
+}
+
+const reply = (message) => {
+  const sentence = Math.floor(Math.random() * 15)
+  const formula = [
+    `Hi, so glad you need me...`,
+    `Hey, where have you been?`,
+    `Hello, sunshine! type one of`,
+    `Howdy, partner!`,
+    `Hey, howdy, hi! try`,
+    `What’s kickin’, little chicken?`,
+    `Peek-a-boo! Yoo-hu`,
+    `Howdy-doody!`,
+    `Hey there, freshman!`,
+    `My name's Terraform-Bot, and I'm a bad guy.`,
+    `Hi, mister! try`,
+    `I come in peace!`,
+    `Put that cookie down!`,
+    `Ahoy, matey! the words you are looking for are`,
+    `Hiya!`
+  ]
+  message.reply(formula[sentence])
+}
+
+const authenticate = (message, callback) => {
+  const options = {
+    url: `${ENDPOINT}/login`,
+    headers: {Authorization: `Key ${APIKEY}`}
+  }
+  request.get(options, (err, data) => {
+    if (err) {
+      message.reply(`Error connecting to the API:\n${err.text}`)
+      callback(err, null)
+    } else {
+      const token = JSON.parse(data.body).token
+      callback(null, {token})
+    }
+  })
+}
+
+const get = (url, message, callback) => {
+  authenticate(message, (err, data) => {
+    if (err) { throw err }
+    const options = {
+      url: `${ENDPOINT}${url}`,
+      headers: {Authorization: `Bearer ${data.token}`}
+    }
+    request.get(options, (err, data) => {
+      if (err) {
+        message.reply(`Error connecting to the API:\n${err.text}`)
+        callback(err, null)
+      } else {
+        callback(null, JSON.parse(data.body))
+      }
+    })
+  })
+}
+
+const show = (message) => {
+  get(`/projects/${PROJECT}/workspaces/${WORKSPACE}`, message, (err, data) => {
+    if (err) {
+      message.reply(`Error detected:\n${err.text}`)
+      return
+    }
+    message.reply(
+      'You are working on:\n'
+        .concat(`\`\`\`\n`)
+        .concat(`project:   ${data.project}\n`)
+        .concat(`workspace: ${data.workspace}\n`)
+        .concat(`ref:       ${data.ref}\n`)
+        .concat(`state:     ${data.state}\n`)
+        .concat(`\`\`\``)
+    )
+  })
 }
 
 module.exports = {
@@ -395,5 +417,13 @@ module.exports = {
 module.exports = (robot) => {
   robot.respond(/terraform\shelp/, (message) => {
     message.reply('Hello! Terraform API scripts are not implemented yet, be patient...')
+  })
+
+  robot.respond(/terraform\shi/, (message) => {
+    reply(message)
+  })
+
+  robot.respond(/terraform\sshow/, (message) => {
+    show(message)
   })
 }

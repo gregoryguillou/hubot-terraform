@@ -49,4 +49,24 @@ describe('terraform', () => {
 
     robot.adapter.receive(new TextMessage(user, 'hubot terraform help'))
   })
+
+  it('responds to hi', (done) => {
+    robot.adapter.on('reply', function (envelope, strings) {
+      done()
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform hi'))
+  })
+
+  it('responds to show', (done) => {
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      expect(answer).to.have.string('demonstration')
+      expect(answer).to.have.string('staging')
+      expect(answer).to.have.string('branch:master')
+      expect(answer).to.have.string('new')
+      done()
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform show'))
+  })
+
 })
