@@ -68,5 +68,4 @@ describe('terraform', () => {
     })
     robot.adapter.receive(new TextMessage(user, 'hubot terraform show'))
   })
-
 })

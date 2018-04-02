@@ -59,7 +59,6 @@ function queryWorkspace (i, props, message, callback) {
   }, 1000)
 }
 
-
 const post = (props, url, payload, message, callback) => {
   authenticate(props, (err, data) => {
     if (err) { throw err }
