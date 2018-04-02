@@ -32,11 +32,15 @@ Then add **hubot-terraform** to your `external-scripts.json`:
 - `TERRAFORM_API__ENDPOINT_URL` is `terraform-api` URL
 - `TERRAFORM_API__APIKEY` is `terraform-api` API Key used to connect
 
-## Sample
+## How to use the script
+
+In order to trigger the script, you shoud run `terraform <VERB>` like
+below:
 
 ```
 hubot> terraform help
-hubot> The list of command you can use is *apply*, *check*, *clean*, *destroy*, *branches*, *help*, *quickcheck*, *show* or *tags*
+hubot> The list of command you can use is *apply*, *check*, *clean*,
+       *destroy*, *branches*, *help*, *quickcheck*, *show* or *tags*
 ```
 
 ## Repositories:
