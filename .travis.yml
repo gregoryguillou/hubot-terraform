@@ -1,12 +1,22 @@
 language: node_js
 sudo: false
+
 notifications:
   email: false
-node_js:
+
+  node_js:
 - '9'
-cache:
+
+services:
+  - docker
+
+  cache:
   directories:
   - node_modules
+
+script:
+  - script/test
+    
 deploy:
   provider: npm
   email: gregory.guillou@resetlogs.com

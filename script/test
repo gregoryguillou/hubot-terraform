@@ -4,3 +4,5 @@
 source script/bootstrap
 
 mocha --compilers coffee:coffee-script  
+
+source script/cleanup
