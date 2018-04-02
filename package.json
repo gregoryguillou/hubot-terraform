@@ -15,7 +15,9 @@
   "bugs": {
     "url": "https://github.com/hubotio/hubot-terraform/issues"
   },
-  "dependencies": {},
+  "dependencies": {
+    "request": "^2.85.0"
+  },
   "peerDependencies": {
     "hubot": ">=2 <10 || 0.0.0-development"
   },
