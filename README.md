@@ -1,7 +1,7 @@
 # hubot-terraform
 
 [![Hubot Terraform](https://api.travis-ci.org/gregoryguillou/hubot-terraform.svg?branch=master)](https://travis-ci.org/gregoryguillou/hubot-terraform/branches)
-[![Package quality](http://packagequality.com/badge/hubot-terraform.png)](http://packagequality.com/#?package=hubot-terraform)
+[![Package Quality](http://npm.packagequality.com/shield/hubot-terraform.svg)](http://packagequality.com/#?package=hubot-terraform)
 
 A hubot script to interact with the Terraform API and allows to run terraform
 projects/workspace from hubot. Refer to
