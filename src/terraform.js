@@ -308,39 +308,39 @@ module.exports = (robot) => {
     help(message)
   })
 
-  robot.respond(/terraform apply/, (message) => {
+  robot.respond(/terraform apply/i, (message) => {
     apply(message)
   })
 
-  robot.respond(/terraform check/, (message) => {
+  robot.respond(/terraform check/i, (message) => {
     check(message)
   })
 
-  robot.respond(/terraform clean/, (message) => {
+  robot.respond(/terraform clean/i, (message) => {
     clean(message)
   })
 
-  robot.respond(/terraform destroy/, (message) => {
+  robot.respond(/terraform destroy/i, (message) => {
     destroy(message)
   })
 
-  robot.respond(/terraform hi/, (message) => {
+  robot.respond(/terraform hi/i, (message) => {
     reply(message)
   })
 
-  robot.respond(/terraform quickcheck/, (message) => {
+  robot.respond(/terraform quickcheck/i, (message) => {
     quickcheck(message)
   })
 
-  robot.respond(/terraform show/, (message) => {
+  robot.respond(/terraform show/i, (message) => {
     show(message)
   })
 
-  robot.respond(/terraform tags/, (message) => {
+  robot.respond(/terraform tags/i, (message) => {
     tags(message)
   })
 
-  robot.respond(/terraform branches/, (message) => {
+  robot.respond(/terraform branches/i, (message) => {
     branches(message)
   })
 }

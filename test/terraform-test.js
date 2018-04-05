@@ -124,6 +124,19 @@ describe('terraform', function () {
     robot.adapter.receive(new TextMessage(user, 'hubot terraform tags'))
   })
 
+  it('responds to Tags (uppercase)', (done) => {
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      expect(answer).to.have.string('v0.0.1')
+      expect(answer).to.have.string('v0.0.2')
+      expect(answer).to.have.string('v0.0.3')
+      expect(answer).to.have.string('v0.1.0')
+      expect(answer).to.have.string('v0.1.1')
+      done()
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform Tags'))
+  })
+
   it('responds to branches', (done) => {
     robot.adapter.on('reply', function (envelope, strings) {
       const answer = strings[0]
