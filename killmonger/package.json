@@ -1,0 +1,18 @@
+{
+  "name": "killmonger",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Gregory Guillou <gregory.guillou@resetlogs.com>",
+  "description": "A simple simulation with the shell adapter",
+  "dependencies": {
+    "hubot": "^3.0.1",
+    "hubot-diagnostics": "^1.0.0",
+    "hubot-help": "^1.0.1",
+    "hubot-redis-brain": "^1.0.0",
+    "hubot-rules": "^1.0.0",
+    "hubot-shell": "^1.0.2"
+  },
+  "engines": {
+    "node": "> 4.0.0"
+  }
+}

@@ -299,6 +299,10 @@ const quickcheck = (message) => {
 }
 
 module.exports = (robot) => {
+  console.log(JSON.stringify(robot.commands))
+  robot.commands.push(`terraform <command>: Runs a Terraform command by calling the API`)
+  robot.commands.push(`terraform help <command>: Provides an help for the given command`)
+
   robot.respond(/terraform help(.*)/i, (message) => {
     const command = message.match[1]
     if (command) {
