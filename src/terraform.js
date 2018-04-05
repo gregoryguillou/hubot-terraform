@@ -128,8 +128,8 @@ const post = (url, payload, message, callback) => {
         callback(err, null)
         return
       }
+      callback(null, response, data)
       queryWorkspace(0, token.token, message, () => {
-        callback(null, response, data)
       })
     })
   })
@@ -239,6 +239,14 @@ const help = (message) => {
   message.reply(`The list of command you can use is ${helpString}`)
 }
 
+const helpdetail = (detail, message) => {
+  if (detail) {
+    message.reply(`*${detail.key}*: ${detail.description}`)
+    return
+  }
+  help(message)
+}
+
 const tags = (message) => {
   get(`/projects/${PROJECT}/tags`, message, (err, data) => {
     if (err) {
@@ -291,43 +299,48 @@ const quickcheck = (message) => {
 }
 
 module.exports = (robot) => {
-  robot.respond(/terraform\shelp/, (message) => {
+  robot.respond(/terraform help(.*)/i, (message) => {
+    const command = message.match[1]
+    if (command) {
+      const detail = helpList.find(p => p.key === command.toLowerCase().replace(/\s+$/g, '').replace(/^\s+/g, ''))
+      return helpdetail(detail, message)
+    }
     help(message)
   })
 
-  robot.respond(/terraform\sapply/, (message) => {
+  robot.respond(/terraform apply/, (message) => {
     apply(message)
   })
 
-  robot.respond(/terraform\scheck/, (message) => {
+  robot.respond(/terraform check/, (message) => {
     check(message)
   })
 
-  robot.respond(/terraform\sclean/, (message) => {
+  robot.respond(/terraform clean/, (message) => {
     clean(message)
   })
 
-  robot.respond(/terraform\sdestroy/, (message) => {
+  robot.respond(/terraform destroy/, (message) => {
     destroy(message)
   })
 
-  robot.respond(/terraform\shi/, (message) => {
+  robot.respond(/terraform hi/, (message) => {
     reply(message)
   })
 
-  robot.respond(/terraform\squickcheck/, (message) => {
+  robot.respond(/terraform quickcheck/, (message) => {
     quickcheck(message)
   })
 
-  robot.respond(/terraform\sshow/, (message) => {
+  robot.respond(/terraform show/, (message) => {
     show(message)
   })
 
-  robot.respond(/terraform\stags/, (message) => {
+  robot.respond(/terraform tags/, (message) => {
     tags(message)
   })
 
-  robot.respond(/terraform\sbranches/, (message) => {
+  robot.respond(/terraform branches/, (message) => {
     branches(message)
   })
 }
