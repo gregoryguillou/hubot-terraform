@@ -58,6 +58,41 @@ describe('terraform', function () {
     robot.adapter.receive(new TextMessage(user, 'hubot terraform help'))
   })
 
+  it('responds to HELP (uppercase)', (done) => {
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      expect(answer).to.have.string('*apply*')
+      expect(answer).to.have.string('*check*')
+      expect(answer).to.have.string('*clean*')
+      expect(answer).to.have.string('*destroy*')
+      expect(answer).to.have.string('*branches*')
+      expect(answer).to.have.string('*help*')
+      expect(answer).to.have.string('*quickcheck*')
+      expect(answer).to.have.string('*show*')
+      expect(answer).to.have.string('*tags*')
+      done()
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot TERRAFORM HELP'))
+  })
+
+  it('responds to help help', (done) => {
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      expect(answer).to.have.string('lists the available commands')
+      done()
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform help help'))
+  })
+
+  it('responds to help APPLY', (done) => {
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      expect(answer).to.have.string('creates or updates the current project/workspace')
+      done()
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform help APPLY'))
+  })
+
   it('responds to hi', (done) => {
     robot.adapter.on('reply', function (envelope, strings) {
       done()
@@ -104,10 +139,10 @@ describe('terraform', function () {
       const answer = strings[0]
       i++
       if (i === 1) {
-        expect(answer).to.have.string('applied')
+        expect(answer).to.have.string(':heart_eyes:')
       }
       if (i === 2) {
-        expect(answer).to.have.string(':heart_eyes:')
+        expect(answer).to.have.string('applied')
         done()
       }
     })
@@ -129,10 +164,10 @@ describe('terraform', function () {
       const answer = strings[0]
       i++
       if (i === 1) {
-        expect(answer).to.have.string('applied')
+        expect(answer).to.have.string(':heart_eyes:')
       }
       if (i === 2) {
-        expect(answer).to.have.string(':heart_eyes:')
+        expect(answer).to.have.string('applied')
         done()
       }
     })
@@ -145,10 +180,10 @@ describe('terraform', function () {
       const answer = strings[0]
       i++
       if (i === 1) {
-        expect(answer).to.have.string('destroyed')
+        expect(answer).to.have.string(':heart_eyes:')
       }
       if (i === 2) {
-        expect(answer).to.have.string(':heart_eyes:')
+        expect(answer).to.have.string('destroyed')
         done()
       }
     })
@@ -170,10 +205,10 @@ describe('terraform', function () {
       const answer = strings[0]
       i++
       if (i === 1) {
-        expect(answer).to.have.string('destroyed')
+        expect(answer).to.have.string(':heart_eyes:')
       }
       if (i === 2) {
-        expect(answer).to.have.string(':heart_eyes:')
+        expect(answer).to.have.string('destroyed')
         done()
       }
     })

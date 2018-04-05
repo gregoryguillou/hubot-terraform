@@ -19,9 +19,7 @@ In hubot project repository, run:
 Then add **hubot-terraform** to your `external-scripts.json`:
 
 ```json
-[
-  "hubot-terraform"
-]
+[ "hubot-terraform" ]
 ```
 
 ## Configuring
