@@ -4,11 +4,14 @@
 //   A hubot script that interact with the Terraform API
 //
 // Configuration:
-//   LIST_OF_ENV_VARS_TO_SET
+//  TERRAFORM_API__PROJECT is the terraform-api project used
+//  TERRAFORM_API__WORKSPACE is the terraform-api workspace used
+//  TERRAFORM_API__ENDPOINT_URL is terraform-api URL
+//  TERRAFORM_API__APIKEY is terraform-api API Key used to connect
 //
 // Commands:
-//   hubot hello - <what the respond trigger does>
-//   orly - <what the hear trigger does>
+//   hubot terraform <command> executes a terraform command via Hubot
+//   hubot terraform help shows the help for all terraform commands
 //
 // Notes:
 //   <optional notes required for the script>

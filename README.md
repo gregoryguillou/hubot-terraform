@@ -48,3 +48,29 @@ You can access `hubot-terraform` from:
 
 - [NPM](https://www.npmjs.com/package/hubot-terraform)
 - [Github](https://github.com/gregoryguillou/hubot-terraform)
+
+
+## A simple way to test `Hubot-Terraform`
+
+If you have cloned the git repository, you can easily test hubot in
+shell/interactive mode. In order to do it, run the `docker-compose.yml`
+to start a sample terraform API and run the `killmonger` script:
+
+```shell
+cd terraform-api
+docker-compose up -d
+
+cd ../killmonger
+bin/killmonger
+```
+
+You should be able to interact with a simple command like below:
+
+```text
+killmonger> killmonger terraform help
+killmonger> Shell: The list of command you can use is *apply*, *check*,
+  *clean*, *destroy*, *branches*, *help*, *quickcheck*, *show* or *tags*
+
+killmonger> 
+```
+
