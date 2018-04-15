@@ -211,6 +211,8 @@ const show = (message) => {
 const helpList = [
   { key: 'apply',
     description: 'creates or updates the current project/workspace' },
+  { key: 'appversion',
+    description: 'Performs a check of the workspace deployment and returns the application version' },
   { key: 'check',
     description: 'checks the full status of the current project/workspace' },
   { key: 'clean',
@@ -326,6 +328,19 @@ const quickcheck = (message) => {
   })
 }
 
+const appversion = (message) => {
+  get(`/projects/${PROJECT}/workspaces/${WORKSPACE}/version`, message, (err, data) => {
+    if (err) {
+      message.reply(`Error detected:\n${err.text}`)
+      return
+    }
+    const statusMessage = (data.appVersion === 'undefined' ? '*failed* :skull_and_crossbones:' : `*${data.appVersion}* :heart_eyes:`)
+    message.reply(
+      `I've checked *${PROJECT}*/*${WORKSPACE}* and the application version is ${statusMessage}\n`
+    )
+  })
+}
+
 module.exports = (robot) => {
   robot.respond(/terraform help(.*)/i, (message) => {
     const command = message.match[1]
@@ -338,6 +353,10 @@ module.exports = (robot) => {
 
   robot.respond(/terraform apply/i, (message) => {
     apply(message)
+  })
+
+  robot.respond(/terraform appversion/i, (message) => {
+    appversion(message)
   })
 
   robot.respond(/terraform branch (.*)/i, (message) => {
