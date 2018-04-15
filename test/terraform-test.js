@@ -227,4 +227,38 @@ describe('terraform', function () {
     })
     robot.adapter.receive(new TextMessage(user, 'hubot terraform clean'))
   })
+
+  it('responds to tag v0.0.3', (done) => {
+    let i = 0
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      i++
+      if (i === 1) {
+        expect(answer).to.have.string('tag is now: v0.0.3 :heart_eyes:')
+      }
+      if (i === 2) {
+        expect(answer).to.have.string('tag:v0.0.3')
+        expect(answer).to.have.string('applied')
+        done()
+      }
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform tag v0.0.3'))
+  })
+
+  it('responds to branch master', (done) => {
+    let i = 0
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      i++
+      if (i === 1) {
+        expect(answer).to.have.string('branch is now: master :heart_eyes:')
+      }
+      if (i === 2) {
+        expect(answer).to.have.string('branch:master')
+        expect(answer).to.have.string('applied')
+        done()
+      }
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform branch master'))
+  })
 })
