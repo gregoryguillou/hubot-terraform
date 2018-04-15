@@ -245,6 +245,15 @@ describe('terraform', function () {
     robot.adapter.receive(new TextMessage(user, 'hubot terraform tag v0.0.3'))
   })
 
+  it('responds to appversion', (done) => {
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      expect(answer).to.have.string('v0.0.3 :heart_eyes:')
+      done()
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform appversion'))
+  })
+
   it('responds to branch master', (done) => {
     let i = 0
     robot.adapter.on('reply', function (envelope, strings) {
