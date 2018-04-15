@@ -217,6 +217,8 @@ const helpList = [
     description: 'cleans the status of the when needed project/workspace' },
   { key: 'destroy',
     description: 'destroys the current project/workspace' },
+  { key: 'branch',
+    description: 'Set the <branch> given as a parameter on the current project/workspace' },
   { key: 'branches',
     description: 'lists the branches associated with the current project' },
   { key: 'help',
@@ -225,6 +227,8 @@ const helpList = [
     description: 'Performs a quickcheck of the workspace deployment and returns its status' },
   { key: 'show',
     description: 'provides some details about the workspace currently managed' },
+  { key: 'tag',
+    description: 'Set the <tag> given as a parameter on the current project/workspace' },
   { key: 'tags',
     description: 'lists the tags associated with the current project' }]
 
@@ -248,6 +252,27 @@ const helpdetail = (detail, message) => {
     return
   }
   help(message)
+}
+
+const ref = (message, type, name) => {
+  post(`/projects/${PROJECT}/workspaces/${WORKSPACE}`, {action: 'apply', ref: `${type}:${name}`}, message, (err, response, data) => {
+    if (err) { throw err }
+    let respMessage = `request succeeded, ${type} is now: ${name} :heart_eyes:`
+    if (response.statusCode === 209) {
+      respMessage = 'change pending, please wait :sweat_smile:'
+    } else if (response.statusCode !== 201) {
+      respMessage = 'ough, it has failed :skull_and_crossbones:'
+    }
+    message.reply(`I've submitted your request and I got: ${respMessage}\n`)
+  })
+}
+
+const tag = (message, name) => {
+  ref(message, 'tag', name)
+}
+
+const branch = (message, name) => {
+  ref(message, 'branch', name)
 }
 
 const tags = (message) => {
@@ -315,6 +340,15 @@ module.exports = (robot) => {
     apply(message)
   })
 
+  robot.respond(/terraform branch (.*)/i, (message) => {
+    const command = message.match[1].replace(/\s+$/g, '').replace(/^\s+/g, '')
+    branch(message, command)
+  })
+
+  robot.respond(/terraform branches/i, (message) => {
+    branches(message)
+  })
+
   robot.respond(/terraform check/i, (message) => {
     check(message)
   })
@@ -339,11 +373,12 @@ module.exports = (robot) => {
     show(message)
   })
 
-  robot.respond(/terraform tags/i, (message) => {
-    tags(message)
+  robot.respond(/terraform tag (.*)/i, (message) => {
+    const command = message.match[1].replace(/\s+$/g, '').replace(/^\s+/g, '')
+    tag(message, command)
   })
 
-  robot.respond(/terraform branches/i, (message) => {
-    branches(message)
+  robot.respond(/terraform tags/i, (message) => {
+    tags(message)
   })
 }
