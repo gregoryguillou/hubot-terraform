@@ -14,7 +14,7 @@ services:
     restart: "always"
 
   runtime:
-    image: "gregoryguillou/terraform-api:${VERSION:-v0.1.8}-runtime"
+    image: "gregoryguillou/terraform-api:v0.1.8-runtime"
     depends_on:
       - consul
     environment:
