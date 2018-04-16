@@ -232,7 +232,9 @@ const helpList = [
   { key: 'tag',
     description: 'Set the <tag> given as a parameter on the current project/workspace' },
   { key: 'tags',
-    description: 'lists the tags associated with the current project' }]
+    description: 'lists the tags associated with the current project' },
+  { key: 'version',
+    description: 'Prints terraform-api version' }]
 
 const help = (message) => {
   var helpString = ''
@@ -341,6 +343,18 @@ const appversion = (message) => {
   })
 }
 
+const version = (message) => {
+  get(`/version`, message, (err, data) => {
+    if (err) {
+      message.reply(`Error detected:\n${err.text}`)
+      return
+    }
+    message.reply(
+      `Terraform-api version is *${data.version}*\n`
+    )
+  })
+}
+
 module.exports = (robot) => {
   robot.respond(/terraform help(.*)/i, (message) => {
     const command = message.match[1]
@@ -399,5 +413,9 @@ module.exports = (robot) => {
 
   robot.respond(/terraform tags/i, (message) => {
     tags(message)
+  })
+
+  robot.respond(/terraform version/i, (message) => {
+    version(message)
   })
 }

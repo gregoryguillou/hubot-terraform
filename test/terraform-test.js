@@ -93,6 +93,15 @@ describe('terraform', function () {
     robot.adapter.receive(new TextMessage(user, 'hubot terraform help APPLY'))
   })
 
+  it('responds to version and expects v0.1.8', (done) => {
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      expect(answer).to.have.string('v0.1.8')
+      done()
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform version'))
+  })
+
   it('responds to hi', (done) => {
     robot.adapter.on('reply', function (envelope, strings) {
       done()
