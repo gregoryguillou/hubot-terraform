@@ -279,4 +279,13 @@ describe('terraform', function () {
     })
     robot.adapter.receive(new TextMessage(user, 'hubot terraform branch master'))
   })
+
+  it('responds to log', (done) => {
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      expect(answer).to.have.string('subkeys.version: "v0.0.3" => "v0.')
+      done()
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform log'))
+  })
 })

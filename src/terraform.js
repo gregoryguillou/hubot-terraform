@@ -23,7 +23,8 @@ const request = require('request')
 const PROJECT = process.env.TERRAFORM_API__PROJECT || 'demonstration'
 const WORKSPACE = process.env.TERRAFORM_API__WORKSPACE || 'staging'
 const ENDPOINT = process.env.TERRAFORM_API__ENDPOINT_URL || 'http://localhost:10010'
-const APIKEY = process.env.TERRAFORM_API__APIKEY || 'welcome'
+const APIKEY = process.env.TERRAFORM_API__APIKEY || 'notsosecretadminkey'
+const stripAnsi = require('strip-ansi')
 
 const reply = (message) => {
   const sentence = Math.floor(Math.random() * 15)
@@ -213,18 +214,22 @@ const helpList = [
     description: 'creates or updates the current project/workspace' },
   { key: 'appversion',
     description: 'Performs a check of the workspace deployment and returns the application version' },
+  { key: 'branch',
+    description: 'Set the <branch> given as a parameter on the current project/workspace' },
+  { key: 'branches',
+    description: 'lists the branches associated with the current project' },
   { key: 'check',
     description: 'checks the full status of the current project/workspace' },
   { key: 'clean',
     description: 'cleans the status of the when needed project/workspace' },
   { key: 'destroy',
     description: 'destroys the current project/workspace' },
-  { key: 'branch',
-    description: 'Set the <branch> given as a parameter on the current project/workspace' },
-  { key: 'branches',
-    description: 'lists the branches associated with the current project' },
   { key: 'help',
     description: 'lists the available commands; use *help command* to get help for a specific command' },
+  { key: 'hi',
+    description: 'says hi to your bot' },
+  { key: 'logs',
+    description: 'displays logs from the last terraform command' },
   { key: 'quickcheck',
     description: 'Performs a quickcheck of the workspace deployment and returns its status' },
   { key: 'show',
@@ -330,6 +335,40 @@ const quickcheck = (message) => {
   })
 }
 
+const logs = (robot, message) => {
+  get(`/projects/${PROJECT}/workspaces/${WORKSPACE}`, message, (err, data) => {
+    if (err) {
+      return message.reply(`Error detected:\n${err.text}`)
+    }
+    get(`/events/${data.lastEvents[0]}/logs`, message, (err, logs) => {
+      if (err) {
+        return message.reply(`Error detected: ${err.text}`)
+      }
+      let output = ''
+      logs.logs.forEach(item => {
+        output = output.concat(`${stripAnsi(item.text)}\n`)
+      })
+      if (robot.adapterName === 'slack' && robot.adapter.client && robot.adapter.client.web && robot.adapter.client.web.files) {
+        return robot.adapter.client.web.chat.postMessage(
+          message.message.room,
+          `Logs for ${PROJECT}/${WORKSPACE}: ${data.ref} ${data.state}`,
+          {
+            as_user: true,
+            unfurl_links: false,
+            attachments: [{
+              color: '#36a64f',
+              text: '```\n'.concat(output).concat('```\n'),
+              footer: 'Terraform',
+              footer_icon: 'https://platform.slack-edge.com/img/default_application_icon.png'
+            }]
+          }
+        )
+      }
+      message.reply(output)
+    })
+  })
+}
+
 const appversion = (message) => {
   get(`/projects/${PROJECT}/workspaces/${WORKSPACE}/version`, message, (err, data) => {
     if (err) {
@@ -356,15 +395,6 @@ const version = (message) => {
 }
 
 module.exports = (robot) => {
-  robot.respond(/terraform help(.*)/i, (message) => {
-    const command = message.match[1]
-    if (command) {
-      const detail = helpList.find(p => p.key === command.toLowerCase().replace(/\s+$/g, '').replace(/^\s+/g, ''))
-      return helpdetail(detail, message)
-    }
-    help(message)
-  })
-
   robot.respond(/terraform apply/i, (message) => {
     apply(message)
   })
@@ -394,8 +424,21 @@ module.exports = (robot) => {
     destroy(message)
   })
 
+  robot.respond(/terraform help(.*)/i, (message) => {
+    const command = message.match[1]
+    if (command) {
+      const detail = helpList.find(p => p.key === command.toLowerCase().replace(/\s+$/g, '').replace(/^\s+/g, ''))
+      return helpdetail(detail, message)
+    }
+    help(message)
+  })
+
   robot.respond(/terraform hi/i, (message) => {
     reply(message)
+  })
+
+  robot.respond(/terraform log/i, (message) => {
+    logs(robot, message)
   })
 
   robot.respond(/terraform quickcheck/i, (message) => {
