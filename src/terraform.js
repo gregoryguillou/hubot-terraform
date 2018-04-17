@@ -252,7 +252,7 @@ const help = (message) => {
       helpString = `${helpString} or *${helpList[i].key}*`
     }
   }
-  message.reply(`The list of command you can use is ${helpString}`)
+  message.reply(`The list of commands you can use is ${helpString}`)
 }
 
 const helpdetail = (detail, message) => {
