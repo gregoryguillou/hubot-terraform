@@ -17,7 +17,8 @@
     "url": "https://github.com/hubotio/hubot-terraform/issues"
   },
   "dependencies": {
-    "request": "^2.85.0"
+    "request": "^2.85.0",
+    "strip-ansi": "^4.0.0"
   },
   "peerDependencies": {
     "hubot": ">=2 <10 || 0.0.0-development"

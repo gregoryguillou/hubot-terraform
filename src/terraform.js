@@ -24,6 +24,7 @@ const PROJECT = process.env.TERRAFORM_API__PROJECT || 'demonstration'
 const WORKSPACE = process.env.TERRAFORM_API__WORKSPACE || 'staging'
 const ENDPOINT = process.env.TERRAFORM_API__ENDPOINT_URL || 'http://localhost:10010'
 const APIKEY = process.env.TERRAFORM_API__APIKEY || 'notsosecretadminkey'
+const stripAnsi = require('strip-ansi')
 
 const reply = (message) => {
   const sentence = Math.floor(Math.random() * 15)
@@ -341,39 +342,27 @@ const logs = (robot, message) => {
       if (err) {
         return message.reply(`Error detected: ${err.text}`)
       }
-      if (robot.adapter.client && robot.adapter.client.web && robot.adapter.client.web.files) {
-        console.log('Send file to the logs')
-        console.log(JSON.stringify(logs.logs))
+      let output = ''
+      logs.logs.forEach(item => {
+        output = output.concat(`${stripAnsi(item.text)}\n`)
+      })
+      if (robot.adapterName === 'slack' && robot.adapter.client && robot.adapter.client.web && robot.adapter.client.web.files) {
         return robot.adapter.client.web.chat.postMessage(
           message.message.room,
-          'This is a message!',
+          `Logs for ${PROJECT}/${WORKSPACE}: ${data.ref} ${data.state}`,
           {
             as_user: true,
             unfurl_links: false,
             attachments: [{
-              fallback: 'Required plain-text summary of the attachment.',
               color: '#36a64f',
-              author_name: 'Bobby Tables',
-              author_link: 'http://flickr.com/bobby/',
-              author_icon: 'http://flickr.com/icons/bobby.jpg',
-              title: 'Slack API Documentation',
-              title_link: 'https://api.slack.com/',
-              text: 'Optional text that appears within the attachment',
-              fields: [{
-                title: 'Priority',
-                value: 'High',
-                short: false
-              }],
-              image_url: 'http://my-website.com/path/to/image.jpg',
-              thumb_url: 'http://example.com/path/to/thumb.png',
-              footer: 'Slack API',
-              footer_icon: 'https://platform.slack-edge.com/img/default_application_icon.png',
-              ts: 123456789
+              text: '```\n'.concat(output).concat('```\n'),
+              footer: 'Terraform',
+              footer_icon: 'https://platform.slack-edge.com/img/default_application_icon.png'
             }]
           }
         )
       }
-      message.reply(logs.logs[0].text)
+      message.reply(output)
     })
   })
 }
