@@ -38,5 +38,5 @@ projects:
         - ./version.sh -w {{terraform-api.WORKSPACE}}
 users:
   - username: 'gregory'
-    apikey: 'welcome'
+    apikey: 'notsosecretadminkey'
     role: administrator
