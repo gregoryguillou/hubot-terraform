@@ -38,8 +38,9 @@ below:
 
 ```
 hubot> terraform help
-hubot> The list of command you can use is *apply*, *check*, *clean*,
-       *destroy*, *branches*, *help*, *quickcheck*, *show* or *tags*
+hubot> The list of commands you can use is *apply*, *appversion*,
+  *branch*, *branches*, *check*, *clean*, *destroy*, *help*, *hi*,
+  *logs*, *quickcheck*, *show*, *tag*, *tags* or *version*
 ```
 
 ## Repositories:
@@ -50,7 +51,7 @@ You can access `hubot-terraform` from:
 - [Github](https://github.com/gregoryguillou/hubot-terraform)
 
 
-## A simple way to test `Hubot-Terraform`
+## A simple way to test `Hubot-Terraform` from the Shell
 
 If you have cloned the git repository, you can easily test hubot in
 shell/interactive mode. In order to do it, run the `docker-compose.yml`
@@ -68,9 +69,34 @@ You should be able to interact with a simple command like below:
 
 ```text
 killmonger> killmonger terraform help
-killmonger> Shell: The list of command you can use is *apply*, *check*,
-  *clean*, *destroy*, *branches*, *help*, *quickcheck*, *show* or *tags*
+killmonger> Shell: The list of command you can use is *apply*, 
+  *appversion*, *branch*, *branches*, *check*, *clean*, *destroy*,
+  *help*, *hi*, *logs*, *quickcheck*, *show*, *tag*, *tags* or 
+  *version*
 
 killmonger> 
 ```
 
+## A simple way to test `Hubot-Terraform` from Slack
+
+If you have cloned the git repository, you can easily test hubot with
+Slack. In order to do it, make sure you've created a Hubot application
+from [Hubot Slack](https://resetlogs.slack.com/apps/A0F7XDU93-hubot),
+note the Hubot Slack Token that starts by `xoxb-`; add it to the .env
+file in the killmonger directory and run the `docker-compose.yml`
+to start a sample terraform API. To start your bot, run the `slack.sh`
+script:
+
+```shell
+cd terraform-api
+docker-compose up -d
+
+cd ../killmonger
+
+# Change the token to match your
+echo "export HUBOT_SLACK_TOKEN=xoxb-000000000000-xxxxxxxxxxxxxxxxxxxxxxxxx" >.env
+
+./slack.sh
+```
+
+You should be able to interact with you bot in Slack.
