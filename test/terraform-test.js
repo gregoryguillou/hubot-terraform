@@ -270,4 +270,14 @@ describe('terraform', function () {
     })
     robot.adapter.receive(new TextMessage(user, 'hubot terraform branch master'))
   })
+
+  it('responds to log', (done) => {
+    robot.adapter.on('reply', function (envelope, strings) {
+      const answer = strings[0]
+      console.log(answer)
+      // expect(answer).to.have.string('branch is now: master :heart_eyes:')
+      done()
+    })
+    robot.adapter.receive(new TextMessage(user, 'hubot terraform log'))
+  })
 })

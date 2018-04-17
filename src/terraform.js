@@ -213,18 +213,22 @@ const helpList = [
     description: 'creates or updates the current project/workspace' },
   { key: 'appversion',
     description: 'Performs a check of the workspace deployment and returns the application version' },
+  { key: 'branch',
+    description: 'Set the <branch> given as a parameter on the current project/workspace' },
+  { key: 'branches',
+    description: 'lists the branches associated with the current project' },
   { key: 'check',
     description: 'checks the full status of the current project/workspace' },
   { key: 'clean',
     description: 'cleans the status of the when needed project/workspace' },
   { key: 'destroy',
     description: 'destroys the current project/workspace' },
-  { key: 'branch',
-    description: 'Set the <branch> given as a parameter on the current project/workspace' },
-  { key: 'branches',
-    description: 'lists the branches associated with the current project' },
   { key: 'help',
     description: 'lists the available commands; use *help command* to get help for a specific command' },
+  { key: 'hi',
+    description: 'says hi to your bot' },
+  { key: 'log',
+    description: 'displays the last terraform log, assuming there is one' },
   { key: 'quickcheck',
     description: 'Performs a quickcheck of the workspace deployment and returns its status' },
   { key: 'show',
@@ -328,6 +332,21 @@ const quickcheck = (message) => {
   })
 }
 
+const log = (message) => {
+  get(`/projects/${PROJECT}/workspaces/${WORKSPACE}`, message, (err, data) => {
+    if (err) {
+      return message.reply(`Error detected:\n${err.text}`)
+    }
+    console.log(JSON.stringify(data))
+    get(`/events/${data.lastEvents[0]}/logs`, message, (err, logs) => {
+      if (err) {
+        return message.reply(`Error detected:\n${err.text}`)
+      }
+      message.reply(logs)
+    })
+  })
+}
+
 const appversion = (message) => {
   get(`/projects/${PROJECT}/workspaces/${WORKSPACE}/version`, message, (err, data) => {
     if (err) {
@@ -342,15 +361,6 @@ const appversion = (message) => {
 }
 
 module.exports = (robot) => {
-  robot.respond(/terraform help(.*)/i, (message) => {
-    const command = message.match[1]
-    if (command) {
-      const detail = helpList.find(p => p.key === command.toLowerCase().replace(/\s+$/g, '').replace(/^\s+/g, ''))
-      return helpdetail(detail, message)
-    }
-    help(message)
-  })
-
   robot.respond(/terraform apply/i, (message) => {
     apply(message)
   })
@@ -380,8 +390,21 @@ module.exports = (robot) => {
     destroy(message)
   })
 
+  robot.respond(/terraform help(.*)/i, (message) => {
+    const command = message.match[1]
+    if (command) {
+      const detail = helpList.find(p => p.key === command.toLowerCase().replace(/\s+$/g, '').replace(/^\s+/g, ''))
+      return helpdetail(detail, message)
+    }
+    help(message)
+  })
+
   robot.respond(/terraform hi/i, (message) => {
     reply(message)
+  })
+
+  robot.respond(/terraform log/i, (message) => {
+    log(message)
   })
 
   robot.respond(/terraform quickcheck/i, (message) => {
