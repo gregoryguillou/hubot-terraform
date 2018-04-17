@@ -23,7 +23,7 @@ const request = require('request')
 const PROJECT = process.env.TERRAFORM_API__PROJECT || 'demonstration'
 const WORKSPACE = process.env.TERRAFORM_API__WORKSPACE || 'staging'
 const ENDPOINT = process.env.TERRAFORM_API__ENDPOINT_URL || 'http://localhost:10010'
-const APIKEY = process.env.TERRAFORM_API__APIKEY || 'welcome'
+const APIKEY = process.env.TERRAFORM_API__APIKEY || 'notsosecretadminkey'
 
 const reply = (message) => {
   const sentence = Math.floor(Math.random() * 15)
@@ -227,8 +227,8 @@ const helpList = [
     description: 'lists the available commands; use *help command* to get help for a specific command' },
   { key: 'hi',
     description: 'says hi to your bot' },
-  { key: 'log',
-    description: 'displays the last terraform log, assuming there is one' },
+  { key: 'logs',
+    description: 'displays logs from the last terraform command' },
   { key: 'quickcheck',
     description: 'Performs a quickcheck of the workspace deployment and returns its status' },
   { key: 'show',
@@ -332,17 +332,48 @@ const quickcheck = (message) => {
   })
 }
 
-const log = (message) => {
+const logs = (robot, message) => {
   get(`/projects/${PROJECT}/workspaces/${WORKSPACE}`, message, (err, data) => {
     if (err) {
       return message.reply(`Error detected:\n${err.text}`)
     }
-    console.log(JSON.stringify(data))
     get(`/events/${data.lastEvents[0]}/logs`, message, (err, logs) => {
       if (err) {
-        return message.reply(`Error detected:\n${err.text}`)
+        return message.reply(`Error detected: ${err.text}`)
       }
-      message.reply(logs)
+      if (robot.adapter.client && robot.adapter.client.web && robot.adapter.client.web.files) {
+        console.log('Send file to the logs')
+        console.log(JSON.stringify(logs.logs))
+        return robot.adapter.client.web.chat.postMessage(
+          message.message.room,
+          'This is a message!',
+          {
+            as_user: true,
+            unfurl_links: false,
+            attachments: [{
+              fallback: 'Required plain-text summary of the attachment.',
+              color: '#36a64f',
+              author_name: 'Bobby Tables',
+              author_link: 'http://flickr.com/bobby/',
+              author_icon: 'http://flickr.com/icons/bobby.jpg',
+              title: 'Slack API Documentation',
+              title_link: 'https://api.slack.com/',
+              text: 'Optional text that appears within the attachment',
+              fields: [{
+                title: 'Priority',
+                value: 'High',
+                short: false
+              }],
+              image_url: 'http://my-website.com/path/to/image.jpg',
+              thumb_url: 'http://example.com/path/to/thumb.png',
+              footer: 'Slack API',
+              footer_icon: 'https://platform.slack-edge.com/img/default_application_icon.png',
+              ts: 123456789
+            }]
+          }
+        )
+      }
+      message.reply(logs.logs[0].text)
     })
   })
 }
@@ -404,7 +435,7 @@ module.exports = (robot) => {
   })
 
   robot.respond(/terraform log/i, (message) => {
-    log(message)
+    logs(robot, message)
   })
 
   robot.respond(/terraform quickcheck/i, (message) => {

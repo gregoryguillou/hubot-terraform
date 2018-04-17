@@ -10,7 +10,8 @@
     "hubot-help": "^1.0.1",
     "hubot-redis-brain": "^1.0.0",
     "hubot-rules": "^1.0.0",
-    "hubot-shell": "^1.0.2"
+    "hubot-shell": "^1.0.2",
+    "hubot-slack": "^4.4.0"
   },
   "engines": {
     "node": "> 4.0.0"
