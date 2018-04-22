@@ -59,3 +59,12 @@ services:
       - couchbase
     command: ['/script/couchbase-setup.sh']
     restart: "no"
+
+  redis:
+    image: redis:3.2
+    ports:
+      - 6379:6379
+    command: ['redis-server', '--appendonly', 'yes' ]
+    labels:
+      - "terraform-api.role=redis-server"
+    restart: "always"
